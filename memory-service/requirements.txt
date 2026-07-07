@@ -1,0 +1,8 @@
+# MAIA memory-service — dependencias (instalar no venv /opt/MAIA/memory-service/venv)
+# Sem pin de versao: usar a mais recente compativel no momento da instalacao.
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+google-generativeai
+sqlite-vec

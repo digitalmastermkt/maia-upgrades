@@ -1,0 +1,19 @@
+[Unit]
+Description=MAIA Memory Service (busca semantica HTTP, 127.0.0.1:3007)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Ajuste User/Group/paths para a sua instalacao (padrao MAIA: user 'maia', /opt/MAIA).
+# O install-memory.sh reescreve estes campos a partir de MAIA_USER e MAIA_HOME.
+User=maia
+Group=maia
+WorkingDirectory=/opt/MAIA/memory-service
+EnvironmentFile=/opt/MAIA/bot/.env
+ExecStart=/opt/MAIA/memory-service/venv/bin/uvicorn app:app --host 127.0.0.1 --port 3007
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+# Scripts sempre com LF (rodam em Linux/VPS mesmo commitados do Windows).
+*.sh text eol=lf
+*.py text eol=lf
+*.service text eol=lf
+*.sql text eol=lf
+# Demais textos: normaliza para LF no repo.
+* text=auto eol=lf

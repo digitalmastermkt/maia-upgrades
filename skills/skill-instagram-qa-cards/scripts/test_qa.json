@@ -1,0 +1,114 @@
+{
+  "cards": [
+    {
+      "tipo": "dica_pratica",
+      "categoria": "IA para iniciantes",
+      "pergunta": "preciso saber programar pra usar ia?",
+      "resposta": "Nao! As ferramentas de IA de hoje sao super **intuitivas**. Qualquer um, como voce, pode começar a **automatizar** e **transformar** seu negocio agora. Comece já!",
+      "destaques": [
+        "intuitivas",
+        "automatizar",
+        "transformar"
+      ]
+    },
+    {
+      "tipo": "mudanca_de_mentalidade",
+      "categoria": "Mitos da automacao",
+      "pergunta": "automacao vai demitir minha equipe?",
+      "resposta": "Jamais! A automação **libera tempo** da sua equipe para focar no que realmente importa: **estrategia** e **crescimento**. Um aluno reduziu 60% das tarefas repetitivas em menos de 30 dias!",
+      "destaques": [
+        "libera tempo",
+        "estrategia",
+        "crescimento"
+      ]
+    },
+    {
+      "tipo": "dica_pratica",
+      "categoria": "Estrategia de automacao",
+      "pergunta": "qual o erro mais comum na hora de automatizar?",
+      "resposta": "O maior erro é automatizar sem **entender o processo**. Primeiro, **documente** cada passo. Só depois automatize. Essa sequência simples vai **acelerar** seus resultados e evitar desperdício de tempo!",
+      "destaques": [
+        "entender o processo",
+        "documente",
+        "acelerar"
+      ]
+    },
+    {
+      "tipo": "historia",
+      "categoria": "Resultados reais com IA",
+      "pergunta": "me conta uma historia de ia no negocio",
+      "resposta": "Um cliente perdia 4h/dia no WhatsApp. Com IA, caiu para 20 min! Ele usou o tempo extra para **fechar mais vendas**. Imagine liberar 3h40min do seu dia para o que realmente **importa** e **dá lucro**!",
+      "destaques": [
+        "fechar mais vendas",
+        "importa",
+        "dá lucro"
+      ]
+    },
+    {
+      "tipo": "insight_contraintuitivo",
+      "categoria": "Produtividade e lucro",
+      "pergunta": "qual um insight inesperado sobre negocios?",
+      "resposta": "Fazer MENOS coisas te faz ganhar MAIS dinheiro! Pare de abraçar o mundo. Foque no que **realmente gera resultado**, e veja seu negócio **crescer mais rápido**. É sobre **inteligência**, não esforço bruto!",
+      "destaques": [
+        "realmente gera resultado",
+        "crescer mais rápido",
+        "inteligência"
+      ]
+    },
+    {
+      "tipo": "insight_contraintuitivo",
+      "categoria": "IA para pequenas empresas",
+      "pergunta": "ia e so pra empresa grande?",
+      "resposta": "NAO! IA não é só para gigantes. Pequenas empresas que adotarem AGORA terão uma **vantagem competitiva** brutal nos próximos 3 anos. É sua chance de **disparar na frente** e **dominar o mercado**!",
+      "destaques": [
+        "vantagem competitiva",
+        "disparar na frente",
+        "dominar o mercado"
+      ]
+    },
+    {
+      "tipo": "mudanca_de_mentalidade",
+      "categoria": "IA como parceiro",
+      "pergunta": "como eu deveria ver a ia no meu negocio?",
+      "resposta": "Pare de ver IA como \"tecnologia\". Pense como uma **contratação estratégica**! Você está ganhando um \"funcionário\" que não dorme, não falta e não pede aumento. É **eficiência máxima** para sua empresa!",
+      "destaques": [
+        "contratação estratégica",
+        "eficiência máxima",
+        "funcionário"
+      ]
+    },
+    {
+      "tipo": "dica_pratica",
+      "categoria": "Comece sua automacao",
+      "pergunta": "qual a primeira coisa pra fazer pra comecar a automatizar?",
+      "resposta": "Comece pela tarefa mais **chata e repetitiva** do seu dia! Anote cada passo dela. Isso é o ponto de partida para a **automação** e para **liberar seu tempo**. Não procrastine, **aja agora**!",
+      "destaques": [
+        "chata e repetitiva",
+        "automação",
+        "liberar seu tempo"
+      ]
+    },
+    {
+      "tipo": "controverso",
+      "categoria": "IA Estrategica",
+      "pergunta": "qual sua opiniao polemica sobre ia?",
+      "resposta": "A maioria dos cursos de IA foca em ferramentas. MAS o que importa é **estratégia**! Ferramenta sem estratégia é puro **desperdício** de tempo e dinheiro. Não caia nessa. Foque no **plano**, não só no botão!",
+      "destaques": [
+        "estratégia",
+        "desperdício",
+        "plano"
+      ]
+    },
+    {
+      "tipo": "historia",
+      "categoria": "Sucesso na automacao",
+      "pergunta": "tem algum caso de sucesso de aluno seu?",
+      "resposta": "Sim! Um aluno meu **reduziu 60%** das tarefas repetitivas do negócio dele em **menos de 30 dias** com IA! Imagine o tempo e a energia **liberados** para focar no crescimento e na estratégia. **Aja e veja a diferença!**",
+      "destaques": [
+        "reduziu 60%",
+        "liberados",
+        "crescimento"
+      ]
+    }
+  ]
+}

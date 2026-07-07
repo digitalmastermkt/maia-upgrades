@@ -1,0 +1,9 @@
+# Nunca versionar segredos nem artefatos locais.
+.env
+*.env.local
+*.sqlite
+*.sqlite-*
+__pycache__/
+*.pyc
+venv/
+backups/
