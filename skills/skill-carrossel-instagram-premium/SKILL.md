@@ -147,7 +147,7 @@ Banco complementar 2026-05-18 (ensaio novo): `assets/brand/banco_fotos/ensaio_20
 
 ## Regras criticas
 
-1. **Acentuacao obrigatoria** (regra Naia 2026-05-12): toda copy em PT-BR DEVE ter acentos corretos. Validador derruba o build se faltar.
+1. **Acentuacao obrigatoria** (regra Maia 2026-05-12): toda copy em PT-BR DEVE ter acentos corretos. Validador derruba o build se faltar.
 2. **Footer imutavel**: handle (`footer_handle()`) + nome da marca (`brand_name()`), vindos do `brand_loader`, em TODO slide. Sem excecao.
 3. **Indicador `XX / YY` obrigatorio** no canto superior direito de todo slide.
 4. **CTA-final** sempre fecha o carrossel.

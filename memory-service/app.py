@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""naia-memory — busca semantica HTTP na memoria da Naia.
+"""maia-memory — busca semantica HTTP na memoria da Maia.
 
 Bind: 127.0.0.1:3007 (somente localhost).
 Indices consultados:
@@ -38,7 +38,7 @@ CHUNK_SIZE = 6000
 REINDEX_INTERVAL_S = 6 * 3600
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
-log = logging.getLogger('naia-memory')
+log = logging.getLogger('maia-memory')
 
 load_dotenv(ENV_PATH)
 _key = os.getenv('GEMINI_API_KEY')
@@ -225,7 +225,7 @@ class SearchRequest(BaseModel):
     source: Optional[str] = None
 
 
-app = FastAPI(title='naia-memory', docs_url=None, redoc_url=None)
+app = FastAPI(title='maia-memory', docs_url=None, redoc_url=None)
 
 
 @app.on_event('startup')

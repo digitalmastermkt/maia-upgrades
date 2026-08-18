@@ -5,7 +5,7 @@ Loop:
   1. Le transcricao + extrai 5 QAs (cache compatible com qa_cards.json existente).
   2. STORIES: 5 cards com Q+A juntos (1080x1920).
   3. FEED: 10 cards no carrossel (capa + 4P + 4R + CTA, 1080x1350).
-  4. Upload MinIO em naia-entregas/cards-instagram/<DATA>-<SLUG>-v3-arquitetura-correta/
+  4. Upload MinIO em <MINIO_BUCKET>/cards-instagram/<DATA>-<SLUG>-v3-arquitetura-correta/
 
 Total: 15 PNGs.
 """
@@ -147,8 +147,8 @@ def _load_minio_env():
         'endpoint': os.getenv('MINIO_ENDPOINT'),
         'access_key': os.getenv('MINIO_ACCESS_KEY'),
         'secret_key': os.getenv('MINIO_SECRET_KEY'),
-        'bucket': os.getenv('MINIO_BUCKET', 'naia-entregas'),
-        'console': os.getenv('MINIO_CONSOLE_URL', 'http://localhost:9001'),
+        'bucket': os.getenv('MINIO_BUCKET', ''),
+        'console': os.getenv('MINIO_CONSOLE_URL', ''),
     }
 
 
@@ -157,8 +157,8 @@ def upload_v3_to_minio(output_dir, custom_prefix):
     try:
         import boto3
         env = _load_minio_env()
-        if not env['endpoint'] or not env['access_key']:
-            print("[MinIO] Sem credenciais no .env, pulando upload")
+        if not env['endpoint'] or not env['access_key'] or not env['bucket']:
+            print("[MinIO] Sem credenciais ou MINIO_BUCKET no .env, pulando upload")
             return ""
         client = boto3.client(
             's3',

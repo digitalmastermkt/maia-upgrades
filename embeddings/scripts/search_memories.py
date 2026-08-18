@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Busca semântica nas memórias da Naia. Uso: search_memories.py "consulta" [top_k]"""
+"""Busca semântica nas memórias da Maia. Uso: search_memories.py "consulta" [top_k]"""
 import os, sys, sqlite3, pathlib, struct
 from dotenv import load_dotenv
 import google.generativeai as genai

@@ -4,7 +4,7 @@
 Uso:
     python upload_persona_to_minio.py <pasta_local> <slug>
 
-Sobe TODOS os arquivos da pasta_local pra naia-entregas/personas/YYYY-MM-DD-<slug>/
+Sobe TODOS os arquivos da pasta_local pra <MINIO_BUCKET>/personas/YYYY-MM-DD-<slug>/
 
 Le credenciais do /opt/MAIA/bot/.env:
     MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET, MINIO_CONSOLE_URL
@@ -51,11 +51,11 @@ def upload_persona(pasta_local: str, slug: str) -> str | None:
     endpoint = env.get('MINIO_ENDPOINT')
     access = env.get('MINIO_ACCESS_KEY')
     secret = env.get('MINIO_SECRET_KEY')
-    bucket = env.get('MINIO_BUCKET', 'naia-entregas')
-    console_url = env.get('MINIO_CONSOLE_URL', 'http://localhost:9001')
+    bucket = env.get('MINIO_BUCKET', '')
+    console_url = env.get('MINIO_CONSOLE_URL', '')
 
-    if not (endpoint and access and secret):
-        print('[upload_persona_to_minio] WARNING: credenciais MinIO ausentes em .env', file=sys.stderr)
+    if not (endpoint and access and secret and bucket):
+        print('[upload_persona_to_minio] WARNING: MinIO nao configurado (credenciais ou MINIO_BUCKET ausentes) -- upload pulado', file=sys.stderr)
         return None
 
     pasta = Path(pasta_local)

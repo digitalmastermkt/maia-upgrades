@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Indexa todas as memórias .md da Naia num banco vetorial (sqlite-vec + Gemini embeddings)."""
+"""Indexa todas as memórias .md da Maia num banco vetorial (sqlite-vec + Gemini embeddings)."""
 import os, sys, sqlite3, pathlib, struct
 from dotenv import load_dotenv
 import google.generativeai as genai

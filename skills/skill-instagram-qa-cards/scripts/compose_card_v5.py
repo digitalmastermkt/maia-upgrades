@@ -1,6 +1,6 @@
 """
 compose_card_v5.py - Arquitetura final v3 cards Instagram Q&A
-Naia, 2026-05-05.
+Maia, 2026-05-05.
 
 5 perguntas 5 respostas (era 10).
 

@@ -1,7 +1,7 @@
 """
 Validador de carrosseis premium.
 Aplica regras criticas do SKILL.md:
-- Acentuacao PT-BR obrigatoria (regra Naia 2026-05-12)
+- Acentuacao PT-BR obrigatoria (regra Maia 2026-05-12)
 - Footer imutavel (handle + nome da marca, vindos do brand_loader)
 - Accent valido (so paleta autorizada)
 - Limites de slides (capa-corpo-...-cta)

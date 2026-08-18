@@ -1,7 +1,7 @@
 # TYPOGRAPHY_GUIDELINES.md
 ## Instagram Q&A Cards — Especificação tipográfica oficial
 
-**Autora:** Juliana (Sub-gerente Operacional, Naia Master)
+**Autora:** Juliana (Sub-gerente Operacional, Maia Master)
 **Data:** 2026-04-30
 **Versão:** 1.0
 **Persona-alvo:** Dono de padaria de Parnaíba, MEI 35-55a, lendo no celular sob luz forte (sol das 11h da manhã, tela bagunçada de notificação). Precisa LER FÁCIL.

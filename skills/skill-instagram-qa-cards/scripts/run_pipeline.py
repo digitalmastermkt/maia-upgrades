@@ -182,14 +182,14 @@ def _load_minio_env():
         'endpoint': os.getenv('MINIO_ENDPOINT'),
         'access_key': os.getenv('MINIO_ACCESS_KEY'),
         'secret_key': os.getenv('MINIO_SECRET_KEY'),
-        'bucket': os.getenv('MINIO_BUCKET', 'naia-entregas'),
-        'console': os.getenv('MINIO_CONSOLE_URL', 'http://localhost:9001'),
+        'bucket': os.getenv('MINIO_BUCKET', ''),
+        'console': os.getenv('MINIO_CONSOLE_URL', ''),
     }
 
 
 def upload_cards_to_minio(output_dir: str, transcricao_filename: str) -> str:
     """
-    Faz upload de todos PNGs em output_dir para naia-entregas/cards-instagram/YYYY-MM-DD-slug/
+    Faz upload de todos PNGs em output_dir para <MINIO_BUCKET>/cards-instagram/YYYY-MM-DD-slug/
     Retorna URL do console MinIO ou string vazia se falhar (nao levanta excecao).
     """
     try:
@@ -197,8 +197,8 @@ def upload_cards_to_minio(output_dir: str, transcricao_filename: str) -> str:
         from datetime import date
         from pathlib import Path
         env = _load_minio_env()
-        if not env['endpoint'] or not env['access_key']:
-            print("[MinIO] Sem credenciais no .env, pulando upload")
+        if not env['endpoint'] or not env['access_key'] or not env['bucket']:
+            print("[MinIO] Sem credenciais ou MINIO_BUCKET no .env, pulando upload")
             return ""
         slug = _slugify(Path(transcricao_filename).stem)
         prefix = f"cards-instagram/{date.today().isoformat()}-{slug}"
