@@ -22,6 +22,12 @@
 # Uso:
 #   sudo bash update.sh                 # skills + agentes (padrao, seguro)
 #   sudo bash update.sh --with-memory   # + memoria semantica (avancado)
+#   sudo bash update.sh --premium       # + canal PRIVADO premium (assinante ativo)
+#
+# --premium exige PREMIUM_TOKEN (env ou /opt/MAIA/bot/.env). Clona o repo
+# privado digitalmastermkt/maia-premium em /tmp, roda o install-skills.sh dele
+# com o MESMO motor (backup->install->validate->rollback) e limpa o /tmp. Sem
+# token / 403 -> mensagem clara e o upgrade publico permanece aplicado.
 #
 # Todos os caminhos sao RELATIVOS a esta pasta (a copia clonada do repo).
 # ============================================================================
@@ -30,9 +36,11 @@ set -euo pipefail
 
 # --- Flags ------------------------------------------------------------------
 WITH_MEMORY=0
+PREMIUM=0
 for arg in "$@"; do
   case "$arg" in
     --with-memory) WITH_MEMORY=1 ;;
+    --premium) PREMIUM=1 ;;
     -h|--help)
       grep -E '^#( |$)' "$0" | sed 's/^# \{0,1\}//'
       exit 0 ;;
@@ -49,6 +57,16 @@ INSTALL_DIR="${MAIA_INSTALL_DIR:-$HOME/.maia}"
 SKILLS_SRC="${SKILLS_SRC:-$REPO_ROOT/skills}"
 AGENTS_SRC="${AGENTS_SRC:-$REPO_ROOT/agents}"
 MEMORY_INSTALLER="$REPO_ROOT/memory-service/install-memory.sh"
+
+# --- Canal premium (privado) ------------------------------------------------
+# Repo privado com as skills premium. So baixa com token de assinante ativo.
+PREMIUM_REPO="${PREMIUM_REPO:-github.com/digitalmastermkt/maia-premium.git}"
+# .env da base MAIA de onde tirar o PREMIUM_TOKEN quando nao vier por env.
+BOT_ENV="${MAIA_BOT_ENV:-/opt/MAIA/bot/.env}"
+# FUTURO: validacao por LICENSE_KEY via endpoint HTTP (desligado por padrao).
+# Quando setado, install_premium troca a LICENSE_KEY por um token de acesso
+# de curta duracao nesse endpoint em vez de usar PREMIUM_TOKEN direto.
+PREMIUM_ENDPOINT="${PREMIUM_ENDPOINT:-}"
 NEW_VERSION="${NEW_VERSION:-$( [[ -f "$REPO_ROOT/VERSION" ]] && head -n1 "$REPO_ROOT/VERSION" | tr -d '[:space:]' || echo '' )}"
 
 # --- Manifesto: skills deste pacote (proprias/genericas da Digital Master) ---
@@ -91,6 +109,63 @@ abort_with_rollback() {
   bash "$HERE/rollback.sh" "$BACKUP_FILE" "$INSTALL_DIR" || log "AVISO: rollback tambem falhou."
   log "Update abortado e revertido."
   exit 1
+}
+
+# Mensagem unica de acesso negado (nunca vaza token nem URL).
+premium_denied() {
+  log "ACESSO PREMIUM NEGADO."
+  echo "Acesso premium requer assinatura ativa — fale com a Agencia no Bolso." >&2
+  return 1
+}
+
+# Instala o canal privado premium usando o MOTOR do proprio repo premium
+# (o install-skills.sh de la faz backup->install->validate->rollback).
+# Nao derruba o upgrade publico ja aplicado: em falha, so retorna != 0.
+install_premium() {
+  local token="${PREMIUM_TOKEN:-}"
+
+  # FUTURO (endpoint por LICENSE_KEY) — hoje so ativa se PREMIUM_ENDPOINT setado:
+  if [[ -z "$token" && -n "$PREMIUM_ENDPOINT" ]] && command -v curl >/dev/null 2>&1; then
+    token="$(curl -fsS -X POST "$PREMIUM_ENDPOINT" \
+               --data-urlencode "license_key=${LICENSE_KEY:-}" 2>/dev/null \
+             | sed -n 's/.*"premium_token"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')" || token=""
+  fi
+
+  # Fonte padrao do token: env PREMIUM_TOKEN, senao /opt/MAIA/bot/.env.
+  if [[ -z "$token" && -f "$BOT_ENV" ]]; then
+    token="$(grep -E '^[[:space:]]*PREMIUM_TOKEN=' "$BOT_ENV" 2>/dev/null \
+             | head -n1 | cut -d= -f2- | tr -d '"'\''[:space:]')"
+  fi
+
+  if [[ -z "$token" ]]; then
+    log "Sem PREMIUM_TOKEN (env ou $BOT_ENV)."
+    premium_denied; return 1
+  fi
+
+  local tmp; tmp="$(mktemp -d)"
+  # Limpa o /tmp em qualquer saida da funcao (inclui o token no path do clone).
+  trap 'rm -rf "$tmp"' RETURN
+
+  log "Baixando canal premium (privado)..."
+  if ! git clone --depth 1 "https://oauth2:${token}@${PREMIUM_REPO}" \
+        "$tmp/maia-premium" >/dev/null 2>&1; then
+    log "Clone premium falhou (token invalido, assinatura inativa ou 403)."
+    premium_denied; return 1
+  fi
+
+  if [[ ! -f "$tmp/maia-premium/install-skills.sh" ]]; then
+    log "Pacote premium sem install-skills.sh — abortando overlay."
+    return 1
+  fi
+
+  log "Instalando skills premium (mesmo motor: backup->install->validate)..."
+  if ! bash "$tmp/maia-premium/install-skills.sh"; then
+    log "FALHA ao instalar o pacote premium (o install-skills.sh ja reverteu a parte dele)."
+    return 1
+  fi
+
+  log "Canal premium aplicado com sucesso."
+  return 0
 }
 
 # =============================== PASSO 3 ====================================
@@ -162,6 +237,19 @@ if [[ -n "$NEW_VERSION" ]]; then
   mkdir -p "$INSTALL_DIR"
   echo "$NEW_VERSION" > "$INSTALL_DIR/VERSION"
   log "Versao atualizada: $CURRENT_VERSION -> $NEW_VERSION"
+fi
+
+# --- Overlay premium (opcional, --premium) ----------------------------------
+# Roda DEPOIS do upgrade publico ja validado: se o premium falhar, o publico
+# permanece aplicado (nao dispara rollback do publico).
+if [[ "$PREMIUM" -eq 1 ]]; then
+  log "PREMIUM - Aplicando canal privado (assinante ativo)"
+  if install_premium; then
+    log "Overlay premium concluido."
+  else
+    log "Overlay premium NAO aplicado (o upgrade publico continua valido)."
+    exit 1
+  fi
 fi
 
 log "UPGRADE CONCLUIDO COM SUCESSO. Movimento gera resultado."

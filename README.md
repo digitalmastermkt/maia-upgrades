@@ -55,6 +55,21 @@ Depois de instalar, o Claude Code **autodescobre** as skills e agentes no
 próximo turno — não precisa reiniciar nada (o `update.sh` já sinaliza o
 restart do bot, se ele existir).
 
+### Canal premium (privado, só assinante ativo)
+
+Clientes **recorrentes ativos** têm um pacote extra de skills no repositório
+**privado** `maia-premium`. Ele só entra com a flag `--premium`, que exige um
+`PREMIUM_TOKEN` (via env ou `/opt/MAIA/bot/.env`):
+
+```bash
+sudo PREMIUM_TOKEN=xxxx bash /tmp/upg/upgrades-engine/update.sh --premium
+```
+
+O `update.sh` clona o `maia-premium` em `/tmp`, instala com o **mesmo motor**
+(backup → install → validate → rollback) e limpa o `/tmp`. Sem token / assinatura
+inativa (403), o upgrade público continua aplicado e aparece a mensagem:
+*"Acesso premium requer assinatura ativa — fale com a Agência no Bolso"*.
+
 ---
 
 ## Como funciona (mecânica de upgrade modular)
