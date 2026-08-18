@@ -24,10 +24,14 @@
 #   sudo bash update.sh --with-memory   # + memoria semantica (avancado)
 #   sudo bash update.sh --premium       # + canal PRIVADO premium (assinante ativo)
 #
-# --premium exige PREMIUM_TOKEN (env ou /opt/MAIA/bot/.env). Clona o repo
-# privado digitalmastermkt/maia-premium em /tmp, roda o install-skills.sh dele
-# com o MESMO motor (backup->install->validate->rollback) e limpa o /tmp. Sem
-# token / 403 -> mensagem clara e o upgrade publico permanece aplicado.
+# --premium (padrao = ENDPOINT): baixa o pacote premium do endpoint HTTP do
+# gate (PREMIUM_ENDPOINT), identificando o cliente pelo MESMO slug do phone-home
+# (LICENSE_CLIENT_ID em /opt/MAIA/bot/.env). 200 -> tar.gz p/ /tmp, valida
+# (tar -tzf), extrai e roda o install-skills.sh dele com o MESMO motor
+# (backup->install->validate->rollback), limpando o /tmp. 403 -> "assinatura
+# inativa"; 503 -> "pacote indisponivel". FALLBACK: se PREMIUM_TOKEN estiver
+# setado (env ou /opt/MAIA/bot/.env), usa o clone git do repo privado. Em
+# qualquer falha, o upgrade publico ja aplicado permanece.
 #
 # Todos os caminhos sao RELATIVOS a esta pasta (a copia clonada do repo).
 # ============================================================================
@@ -61,12 +65,11 @@ MEMORY_INSTALLER="$REPO_ROOT/memory-service/install-memory.sh"
 # --- Canal premium (privado) ------------------------------------------------
 # Repo privado com as skills premium. So baixa com token de assinante ativo.
 PREMIUM_REPO="${PREMIUM_REPO:-github.com/digitalmastermkt/maia-premium.git}"
-# .env da base MAIA de onde tirar o PREMIUM_TOKEN quando nao vier por env.
+# .env da base MAIA de onde tirar PREMIUM_TOKEN (fallback) e o slug do cliente.
 BOT_ENV="${MAIA_BOT_ENV:-/opt/MAIA/bot/.env}"
-# FUTURO: validacao por LICENSE_KEY via endpoint HTTP (desligado por padrao).
-# Quando setado, install_premium troca a LICENSE_KEY por um token de acesso
-# de curta duracao nesse endpoint em vez de usar PREMIUM_TOKEN direto.
-PREMIUM_ENDPOINT="${PREMIUM_ENDPOINT:-}"
+# Endpoint HTTP do gate premium (MODO PADRAO). Valida a licenca do cliente pelo
+# slug (LICENSE_CLIENT_ID) e streama o tar.gz do pacote. Vazio = desliga o modo.
+PREMIUM_ENDPOINT="${PREMIUM_ENDPOINT:-https://painel.agencianobolso.com.br/premium/package}"
 NEW_VERSION="${NEW_VERSION:-$( [[ -f "$REPO_ROOT/VERSION" ]] && head -n1 "$REPO_ROOT/VERSION" | tr -d '[:space:]' || echo '' )}"
 
 # --- Manifesto: skills deste pacote (proprias/genericas da Digital Master) ---
@@ -118,35 +121,92 @@ premium_denied() {
   return 1
 }
 
-# Instala o canal privado premium usando o MOTOR do proprio repo premium
-# (o install-skills.sh de la faz backup->install->validate->rollback).
-# Nao derruba o upgrade publico ja aplicado: em falha, so retorna != 0.
-install_premium() {
-  local token="${PREMIUM_TOKEN:-}"
-
-  # FUTURO (endpoint por LICENSE_KEY) — hoje so ativa se PREMIUM_ENDPOINT setado:
-  if [[ -z "$token" && -n "$PREMIUM_ENDPOINT" ]] && command -v curl >/dev/null 2>&1; then
-    token="$(curl -fsS -X POST "$PREMIUM_ENDPOINT" \
-               --data-urlencode "license_key=${LICENSE_KEY:-}" 2>/dev/null \
-             | sed -n 's/.*"premium_token"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')" || token=""
+# Resolve o slug do cliente EXATAMENTE como o phone-home/verificador: env
+# LICENSE_CLIENT_ID, senao a linha LICENSE_CLIENT_ID= do BOT_ENV (/opt/MAIA/bot/.env).
+_resolve_slug() {
+  local slug="${LICENSE_CLIENT_ID:-}"
+  if [[ -z "$slug" && -f "$BOT_ENV" ]]; then
+    slug="$(grep -E '^[[:space:]]*LICENSE_CLIENT_ID=' "$BOT_ENV" 2>/dev/null \
+             | head -n1 | cut -d= -f2- | tr -d '"'\''[:space:]')"
   fi
+  printf '%s' "$slug"
+}
 
-  # Fonte padrao do token: env PREMIUM_TOKEN, senao /opt/MAIA/bot/.env.
+# Resolve o PREMIUM_TOKEN (fallback): env, senao a linha do BOT_ENV.
+_resolve_premium_token() {
+  local token="${PREMIUM_TOKEN:-}"
   if [[ -z "$token" && -f "$BOT_ENV" ]]; then
     token="$(grep -E '^[[:space:]]*PREMIUM_TOKEN=' "$BOT_ENV" 2>/dev/null \
              | head -n1 | cut -d= -f2- | tr -d '"'\''[:space:]')"
   fi
+  printf '%s' "$token"
+}
 
-  if [[ -z "$token" ]]; then
-    log "Sem PREMIUM_TOKEN (env ou $BOT_ENV)."
+# MODO ENDPOINT (padrao): baixa o tar.gz do gate autenticando pelo slug, valida
+# o tar ANTES de extrair, e roda o install-skills.sh dele com o MESMO motor.
+install_premium_endpoint() {
+  local slug; slug="$(_resolve_slug)"
+  if [[ -z "$slug" ]]; then
+    log "Sem LICENSE_CLIENT_ID (env ou $BOT_ENV) — cliente nao identificavel no endpoint premium."
     premium_denied; return 1
   fi
+  if ! command -v curl >/dev/null 2>&1; then
+    log "curl ausente — o modo endpoint premium precisa de curl."
+    return 1
+  fi
 
+  local tmp; tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' RETURN
+  local tgz="$tmp/maia-premium.tar.gz" code
+  log "Baixando pacote premium do endpoint (assinante ativo)..."
+  code="$(curl -sS -o "$tgz" -w '%{http_code}' \
+           -H "X-Client-Slug: $slug" \
+           "$PREMIUM_ENDPOINT" 2>/dev/null || echo 000)"
+
+  case "$code" in
+    200) : ;;
+    403) log "Endpoint premium respondeu 403 (assinatura inativa)."
+         echo "Assinatura premium inativa — fale com a Agencia no Bolso." >&2
+         return 1 ;;
+    503) log "Endpoint premium respondeu 503 (pacote indisponivel)."
+         echo "Pacote premium indisponivel, tente mais tarde." >&2
+         return 1 ;;
+    *)   log "Endpoint premium retornou HTTP $code inesperado."
+         premium_denied; return 1 ;;
+  esac
+
+  # Valida o tar ANTES de extrair (pacote corrompido/HTML de erro nao explode).
+  if ! tar -tzf "$tgz" >/dev/null 2>&1; then
+    log "Pacote premium invalido (tar -tzf falhou) — abortando overlay."
+    return 1
+  fi
+  mkdir -p "$tmp/pkg"
+  if ! tar -xzf "$tgz" -C "$tmp/pkg" >/dev/null 2>&1; then
+    log "Falha ao extrair o pacote premium — abortando overlay."
+    return 1
+  fi
+  if [[ ! -f "$tmp/pkg/install-skills.sh" ]]; then
+    log "Pacote premium sem install-skills.sh — abortando overlay."
+    return 1
+  fi
+
+  log "Instalando skills premium (mesmo motor: backup->install->validate)..."
+  if ! bash "$tmp/pkg/install-skills.sh"; then
+    log "FALHA ao instalar o pacote premium (o install-skills.sh ja reverteu a parte dele)."
+    return 1
+  fi
+  log "Canal premium aplicado com sucesso (via endpoint)."
+  return 0
+}
+
+# MODO TOKEN (fallback): clone git do repo privado com PREMIUM_TOKEN.
+install_premium_token() {
+  local token="$1"
   local tmp; tmp="$(mktemp -d)"
   # Limpa o /tmp em qualquer saida da funcao (inclui o token no path do clone).
   trap 'rm -rf "$tmp"' RETURN
 
-  log "Baixando canal premium (privado)..."
+  log "Baixando canal premium (privado, via token)..."
   if ! git clone --depth 1 "https://oauth2:${token}@${PREMIUM_REPO}" \
         "$tmp/maia-premium" >/dev/null 2>&1; then
     log "Clone premium falhou (token invalido, assinatura inativa ou 403)."
@@ -164,8 +224,24 @@ install_premium() {
     return 1
   fi
 
-  log "Canal premium aplicado com sucesso."
+  log "Canal premium aplicado com sucesso (via token)."
   return 0
+}
+
+# Dispatcher: PREMIUM_TOKEN setado (env/BOT_ENV) -> modo token; senao endpoint.
+# Nao derruba o upgrade publico ja aplicado: em falha, so retorna != 0.
+install_premium() {
+  local token; token="$(_resolve_premium_token)"
+  if [[ -n "$token" ]]; then
+    log "Canal premium: modo TOKEN (PREMIUM_TOKEN presente)."
+    install_premium_token "$token"; return $?
+  fi
+  if [[ -z "$PREMIUM_ENDPOINT" ]]; then
+    log "Sem PREMIUM_TOKEN e sem PREMIUM_ENDPOINT — nada a fazer no premium."
+    premium_denied; return 1
+  fi
+  log "Canal premium: modo ENDPOINT (padrao)."
+  install_premium_endpoint; return $?
 }
 
 # =============================== PASSO 3 ====================================
