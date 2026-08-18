@@ -24,7 +24,7 @@ O `SKILL.md` comeca com frontmatter YAML:
 
 ```yaml
 ---
-name: skill-dossie-sdr
+name: skill-docx
 description: Quando usar a skill (gatilhos claros pro runtime decidir sozinho).
 allowed-tools: Read, Write, Bash
 ---

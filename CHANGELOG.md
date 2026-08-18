@@ -7,9 +7,8 @@ Convenção de versão: `ANO.MINOR-upgrade-N`.
 Primeiro pacote público de upgrade da MAIA Cliente.
 
 ### Adicionado
-- **8 skills** próprias da Digital Master / genéricas em `skills/`:
-  `criar-subagente`, `skill-claude-md-builder`,
-  `skill-carrossel-instagram-premium`, `skill-docx`, `skill-dossie-sdr`,
+- **5 skills** próprias da Digital Master / genéricas em `skills/`:
+  `skill-claude-md-builder`, `skill-docx`,
   `skill-instagram-qa-cards`, `skill-persona-profunda`,
   `skill-seguranca-meta-ads`.
 - **7 agentes** em `agents/`: `lis`, `theo`, `leo`, `nina`, `eva`, `ravi`, `caio`.

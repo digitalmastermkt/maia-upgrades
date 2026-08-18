@@ -2,10 +2,12 @@
   "id": "maia-cliente",
   "nome": "MAIA Cliente - Pacote de Upgrade",
   "versao": "2026.7-upgrade-1",
-  "descricao": "Pacote publico que transforma uma MAIA Aluno (base) numa MAIA Cliente: PLUGA 8 skills + os 7 agentes no nucleo, sem tocar na base. Memoria semantica (busca vetorial na porta 3007) e opcional, so instala com --with-memory.",
+  "descricao": "Pacote publico que transforma uma MAIA Aluno (base) numa MAIA Cliente: PLUGA 5 skills + os 7 agentes no nucleo, sem tocar na base. Memoria semantica (busca vetorial na porta 3007) e opcional, so instala com --with-memory.",
   "fornecedor": "Digital Master / Salatiel Batista",
   "publico": true,
-  "cerebro_alvo": ["claude"],
+  "cerebro_alvo": [
+    "claude"
+  ],
   "requer_versao_base_minima": "2026.6",
   "instalacao": {
     "comando_padrao": "git clone https://github.com/digitalmastermkt/maia-upgrades.git /tmp/upg && sudo bash /tmp/upg/upgrades-engine/update.sh && rm -rf /tmp/upg",
@@ -13,23 +15,80 @@
     "sem_token": true
   },
   "skills": [
-    { "nome": "criar-subagente",                 "pasta": "skills/criar-subagente",                 "destino_claude": "~/.claude/skills/criar-subagente",                 "obrigatoria": true },
-    { "nome": "skill-claude-md-builder",          "pasta": "skills/skill-claude-md-builder",          "destino_claude": "~/.claude/skills/skill-claude-md-builder",          "obrigatoria": true },
-    { "nome": "skill-carrossel-instagram-premium","pasta": "skills/skill-carrossel-instagram-premium","destino_claude": "~/.claude/skills/skill-carrossel-instagram-premium","obrigatoria": true },
-    { "nome": "skill-docx",                       "pasta": "skills/skill-docx",                       "destino_claude": "~/.claude/skills/skill-docx",                       "obrigatoria": true },
-    { "nome": "skill-dossie-sdr",                 "pasta": "skills/skill-dossie-sdr",                 "destino_claude": "~/.claude/skills/skill-dossie-sdr",                 "obrigatoria": true },
-    { "nome": "skill-instagram-qa-cards",         "pasta": "skills/skill-instagram-qa-cards",         "destino_claude": "~/.claude/skills/skill-instagram-qa-cards",         "obrigatoria": true },
-    { "nome": "skill-persona-profunda",           "pasta": "skills/skill-persona-profunda",           "destino_claude": "~/.claude/skills/skill-persona-profunda",           "obrigatoria": true },
-    { "nome": "skill-seguranca-meta-ads",         "pasta": "skills/skill-seguranca-meta-ads",         "destino_claude": "~/.claude/skills/skill-seguranca-meta-ads",         "obrigatoria": true }
+    {
+      "nome": "skill-claude-md-builder",
+      "pasta": "skills/skill-claude-md-builder",
+      "destino_claude": "~/.claude/skills/skill-claude-md-builder",
+      "obrigatoria": true
+    },
+    {
+      "nome": "skill-docx",
+      "pasta": "skills/skill-docx",
+      "destino_claude": "~/.claude/skills/skill-docx",
+      "obrigatoria": true
+    },
+    {
+      "nome": "skill-instagram-qa-cards",
+      "pasta": "skills/skill-instagram-qa-cards",
+      "destino_claude": "~/.claude/skills/skill-instagram-qa-cards",
+      "obrigatoria": true
+    },
+    {
+      "nome": "skill-persona-profunda",
+      "pasta": "skills/skill-persona-profunda",
+      "destino_claude": "~/.claude/skills/skill-persona-profunda",
+      "obrigatoria": true
+    },
+    {
+      "nome": "skill-seguranca-meta-ads",
+      "pasta": "skills/skill-seguranca-meta-ads",
+      "destino_claude": "~/.claude/skills/skill-seguranca-meta-ads",
+      "obrigatoria": true
+    }
   ],
   "subagentes": [
-    { "nome": "lis",  "arquivo": "agents/lis.md",  "destino_claude": "~/.claude/agents/lis.md",  "papel": "SDR e Atendimento" },
-    { "nome": "theo", "arquivo": "agents/theo.md", "destino_claude": "~/.claude/agents/theo.md", "papel": "Copywriter, Pesquisa e Persona" },
-    { "nome": "leo",  "arquivo": "agents/leo.md",  "destino_claude": "~/.claude/agents/leo.md",  "papel": "Dev Full-stack, Deploy e Infra" },
-    { "nome": "nina", "arquivo": "agents/nina.md", "destino_claude": "~/.claude/agents/nina.md", "papel": "Sub-gerente Operacional / Coordenacao" },
-    { "nome": "eva",  "arquivo": "agents/eva.md",  "destino_claude": "~/.claude/agents/eva.md",  "papel": "CRM e Pos-venda" },
-    { "nome": "ravi", "arquivo": "agents/ravi.md", "destino_claude": "~/.claude/agents/ravi.md", "papel": "Trafego Pago e Midia" },
-    { "nome": "caio", "arquivo": "agents/caio.md", "destino_claude": "~/.claude/agents/caio.md", "papel": "Gestao de Projetos e Roadmap" }
+    {
+      "nome": "lis",
+      "arquivo": "agents/lis.md",
+      "destino_claude": "~/.claude/agents/lis.md",
+      "papel": "SDR e Atendimento"
+    },
+    {
+      "nome": "theo",
+      "arquivo": "agents/theo.md",
+      "destino_claude": "~/.claude/agents/theo.md",
+      "papel": "Copywriter, Pesquisa e Persona"
+    },
+    {
+      "nome": "leo",
+      "arquivo": "agents/leo.md",
+      "destino_claude": "~/.claude/agents/leo.md",
+      "papel": "Dev Full-stack, Deploy e Infra"
+    },
+    {
+      "nome": "nina",
+      "arquivo": "agents/nina.md",
+      "destino_claude": "~/.claude/agents/nina.md",
+      "papel": "Sub-gerente Operacional / Coordenacao"
+    },
+    {
+      "nome": "eva",
+      "arquivo": "agents/eva.md",
+      "destino_claude": "~/.claude/agents/eva.md",
+      "papel": "CRM e Pos-venda"
+    },
+    {
+      "nome": "ravi",
+      "arquivo": "agents/ravi.md",
+      "destino_claude": "~/.claude/agents/ravi.md",
+      "papel": "Trafego Pago e Midia"
+    },
+    {
+      "nome": "caio",
+      "arquivo": "agents/caio.md",
+      "destino_claude": "~/.claude/agents/caio.md",
+      "papel": "Gestao de Projetos e Roadmap"
+    }
   ],
   "passos_pos_install": {
     "claude": [

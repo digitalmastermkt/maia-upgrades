@@ -1,7 +1,7 @@
 # MAIA Upgrades — Pacote público (Digital Master)
 
 > Transforma uma **MAIA Aluno** (base enxuta) numa **MAIA Cliente** completa:
-> pluga **8 skills** + os **7 agentes** no núcleo — **sem tocar na base**.
+> pluga **5 skills** + os **7 agentes** no núcleo — **sem tocar na base**.
 > A memória semântica é **opcional** (só entra com `--with-memory`).
 >
 > Marca: **Digital Master / Salatiel Batista** — *"Movimento gera resultado."*
@@ -12,12 +12,9 @@
 
 **Por padrão (seguro para rodar ao vivo numa aula):**
 
-- **8 skills** em `~/.claude/skills/` (cópia de pastas, autodescobertas pelo Claude Code):
-  - `criar-subagente` — cria novos subagentes sob medida
+- **5 skills** em `~/.claude/skills/` (cópia de pastas, autodescobertas pelo Claude Code):
   - `skill-claude-md-builder` — monta o CLAUDE.md do negócio
-  - `skill-carrossel-instagram-premium` — carrosséis 1080×1080 premium
   - `skill-docx` — documentos Word com a identidade da marca
-  - `skill-dossie-sdr` — dossiê de pré-abordagem SDR (pipeline BMAD)
   - `skill-instagram-qa-cards` — 20 cards de Q&A pro Instagram
   - `skill-persona-profunda` — persona com 30 dimensões + ICP + anti-persona
   - `skill-seguranca-meta-ads` — automação segura da Meta Ads API
@@ -105,7 +102,7 @@ Todos os `.sh` são **idempotentes** (seguros de rodar de novo) e usam caminhos
 
 ```
 maia-upgrades/
-├── skills/                 # 8 skills (propriedade Digital Master / genéricas)
+├── skills/                 # 5 skills (propriedade Digital Master / genéricas)
 ├── agents/                 # 7 agentes (.md)
 ├── upgrades-engine/        # motor de upgrade (update.sh + helpers)
 │   ├── update.sh           # orquestrador (skills + agentes; --with-memory)

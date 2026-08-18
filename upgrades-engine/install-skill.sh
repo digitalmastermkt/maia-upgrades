@@ -10,7 +10,7 @@
 #
 # Uso:
 #   ./install-skill.sh <caminho-da-skill>
-#   sudo ./install-skill.sh /opt/maia-upgrades/skill-dossie-sdr
+#   sudo ./install-skill.sh /opt/maia-upgrades/skill-docx
 #
 # A "skill" e uma PASTA autodescoberta contendo SKILL.md (frontmatter YAML)
 # e seus scripts/templates ao lado. O runtime do Claude Code descobre a skill
